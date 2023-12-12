@@ -28,7 +28,6 @@ Plug 'kyazdani42/nvim-web-devicons'
 Plug 'kyazdani42/nvim-tree.lua'
 Plug 'tpope/vim-commentary' 
 Plug 'ap/vim-css-color'
-Plug 'glepnir/dashboard-nvim'
 Plug 'neovim/nvim-lspconfig'
 Plug 'morhetz/gruvbox'
 Plug 'ryanoasis/vim-devicons'
@@ -50,23 +49,11 @@ vim.call("plug#end")
 vim.g.loaded = 1
 vim.g.loaded_netrwPlugin = 1
 
-local db = require("dashboard")
-
 vim.g.gruvbox_transparent_bg = 1
 vim.cmd("autocmd VimEnter * hi Normal ctermbg=none")
 vim.cmd("colo gruvbox")
 
-db.custom_center = {
-	{ desc = "Open Project        ", action = "NvimTreeOpen" },
-	{ desc = "Find File         ", action = "Telescope find_files", shortcut = "F7" },
-	{ desc = "Recent Files      ", action = "Telescope oldfiles", shortcut = "F8" },
-	{ desc = "Search Text       ", action = "Telescope live_grep", shortcut = "F9" },
-	{ desc = "New File            ", action = ":new" },
-	{ desc = "Exit                ", action = ":q"},
-}
-
 require'lspconfig'.tsserver.setup{}
--- require'lspconfig'.rls.setup{}
 
 require("nvim-tree").setup({
 	filters = {
@@ -77,13 +64,11 @@ require("nvim-tree").setup({
 })
 
 require'nvim-treesitter.configs'.setup {
-  ensure_installed = { "c", "lua", "rust" },
-  sync_install = false,
-  auto_install = true,
-  ignore_install = { "javascript" },
+  ensure_installed = "all",
+  -- sync_install = false,
+  -- auto_install = true,
   highlight = {
     enable = true,
-    disable = { "c", "rust" },
     additional_vim_regex_highlighting = true,
   },
 }
@@ -125,16 +110,17 @@ vim.g.airline_extensions_tabline = 1
 
 vim.api.nvim_set_keymap("i", "<c-space>", "coc#refresh()", { noremap = true, silent = true, expr = true })
 vim.api.nvim_set_keymap("i", "<CR>", "coc#pum#visible() ? coc#pum#confirm() : '<CR>'", { noremap = true, silent = true, expr = true })
-vim.api.nvim_set_keymap("n", "<C-n>", ":NvimTreeOpen<CR>", { noremap = true })
+vim.api.nvim_set_keymap("n", "<C-c>", ":NvimTreeClose<CR>", { noremap = true })
 vim.api.nvim_set_keymap("n", "<C-f>", ":NvimTreeFocus<CR>", { noremap = true })
 vim.api.nvim_set_keymap("n", "<C-j>", ":NvimTreeToggle<CR>", { noremap = true })
-vim.api.nvim_set_keymap("n", "<C-s>", ":Prettier<CR>", { noremap = true })
-vim.api.nvim_set_keymap("n", "<F7>", ":Telescope find_files<CR>", { noremap = true })
-vim.api.nvim_set_keymap("n", "<F8>", ":Telescope oldfiles<CR>", { noremap = true })
-vim.api.nvim_set_keymap("n", "<F9>", ":Telescope live_grep<CR>", { noremap = true })
+vim.api.nvim_set_keymap("n", "<C-t>", ":Telescope find_files<CR>", { noremap = true })
+vim.api.nvim_set_keymap("n", "<C-y>", ":Telescope oldfiles<CR>", { noremap = true })
+vim.api.nvim_set_keymap("n", "<C-u>", ":Telescope live_grep<CR>", { noremap = true })
 vim.api.nvim_set_keymap("v", "<S-k>", ":m '<-2<CR>gv=gv", { noremap = true })
 vim.api.nvim_set_keymap("v", "<S-j>", ":m '>+1<CR>gv=gv", { noremap = true })
-vim.api.nvim_set_keymap("n", "<C-Left>", ":tabprevious<CR>", { noremap = true })
-vim.api.nvim_set_keymap("n", "<C-Right>", ":tabnext<CR>", { noremap = true })
-vim.api.nvim_set_keymap("n", "<C-Up>", ":tabfirst<CR>", { noremap = true })
-vim.api.nvim_set_keymap("n", "<C-Down>", ":tablast<CR>", { noremap = true })
+
+vim.cmd([[
+	autocmd FileType rust nnoremap <silent> <C-s> :silent %! rustfmt<CR>
+	autocmd FileType javascript nnoremap <silent> <C-s> :Prettier<CR>
+]])
+
