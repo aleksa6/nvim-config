@@ -33,7 +33,6 @@ Plug 'morhetz/gruvbox'
 Plug 'ryanoasis/vim-devicons'
 Plug 'neoclide/coc.nvim'
 Plug 'jiangmiao/auto-pairs'
-Plug '907th/vim-auto-save'
 Plug 'lukas-reineke/indent-blankline.nvim'
 Plug 'tpope/vim-fugitive'
 Plug 'folke/tokyonight.nvim'
@@ -43,6 +42,7 @@ Plug('nvim-treesitter/nvim-treesitter', { ['do'] = ':TSUpdate' })
 Plug('prettier/vim-prettier', {
   ['do'] = 'yarn install --frozen-lockfile --production',
   ['for'] = { 'javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue', 'svelte', 'yaml', 'html' } })
+Plug 'simrat39/rust-tools.nvim'
 
 vim.call("plug#end")
 
@@ -53,7 +53,10 @@ vim.g.gruvbox_transparent_bg = 1
 vim.cmd("autocmd VimEnter * hi Normal ctermbg=none")
 vim.cmd("colo gruvbox")
 
-require'lspconfig'.tsserver.setup{}
+require("rust-tools").setup()
+
+local lspconfig = require'lspconfig'
+lspconfig.tsserver.setup{}
 
 require("nvim-tree").setup({
 	filters = {
@@ -65,8 +68,8 @@ require("nvim-tree").setup({
 
 require'nvim-treesitter.configs'.setup {
   ensure_installed = "all",
-  -- sync_install = false,
-  -- auto_install = true,
+  sync_install = false,
+  auto_install = true,
   highlight = {
     enable = true,
     additional_vim_regex_highlighting = true,
@@ -101,7 +104,6 @@ require("tokyonight").setup({
 	on_highlights = function(highlights, colors) end,
 })
 
-vim.g.auto_save = 1
 vim.g.airline_powerline_fonts = 1
 vim.g.airline_ = 1
 vim.g.airline_theme = 'gruvbox'
