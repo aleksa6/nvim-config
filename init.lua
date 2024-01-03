@@ -4,6 +4,7 @@ set relativenumber
 set wildmenu
 set tabstop=2
 set shiftwidth=2
+set expandtab
 set mouse=a
 set nowrap
 set nobackup
@@ -60,11 +61,11 @@ local lspconfig = require'lspconfig'
 lspconfig.tsserver.setup{}
 
 require("nvim-tree").setup({
-	filters = {
-		dotfiles = false,
-		custom = { "^.git$" },
-		exclude = { ".env" }
-	}
+  filters = {
+    dotfiles = false,
+    custom = { "^.git$" },
+    exclude = { ".env" }
+  }
 })
 
 require'nvim-treesitter.configs'.setup {
@@ -78,10 +79,10 @@ require'nvim-treesitter.configs'.setup {
 }
 
 require("telescope").setup({
-	pickers = { find_files = { no_ignore = true, hidden = true } },
-	defaults = { 
-		file_ignore_patterns = { ".git/", "node_modules" },
-	}
+  pickers = { find_files = { no_ignore = true, hidden = true } },
+  defaults = { 
+    file_ignore_patterns = { ".git/", "node_modules" },
+  }
 })
 
 require("tokyonight").setup({
@@ -96,13 +97,13 @@ require("tokyonight").setup({
     sidebars = "dark",
     floats = "dark", 
   },
-	sidebars = { "qf", "help" }, 
-	day_brightness = 0.3,
-	hide_inactive_statusline = false,
-	dim_inactive = false,
-	lualine_bold = false, 
-	on_colors = function(colors) end,
-	on_highlights = function(highlights, colors) end,
+  sidebars = { "qf", "help" }, 
+  day_brightness = 0.3,
+  hide_inactive_statusline = false,
+  dim_inactive = false,
+  lualine_bold = false, 
+  on_colors = function(colors) end,
+  on_highlights = function(highlights, colors) end,
 })
 
 vim.g.airline_powerline_fonts = 1
@@ -125,8 +126,8 @@ vim.api.nvim_set_keymap("n", "<C-d>", "<C-d>zz", { noremap = true })
 vim.api.nvim_set_keymap("n", "<C-u>", "<C-u>zz", { noremap = true })
 
 vim.cmd([[
-	autocmd FileType rust nnoremap <silent> <C-s> :silent %! rustfmt<CR>
-	autocmd FileType javascript nnoremap <silent> <C-s> :Prettier<CR>
-	autocmd FileType cpp setlocal expandtab tabstop=2 shiftwidth=4
+  autocmd FileType rust nnoremap <silent> <C-s> :silent %! rustfmt<CR>
+  autocmd FileType javascript nnoremap <silent> <C-s> :Prettier<CR>
+  autocmd FileType cpp setlocal tabstop=2 shiftwidth=4
 ]])
 
