@@ -4,6 +4,7 @@ set relativenumber
 set wildmenu
 set tabstop=2
 set shiftwidth=2
+set number
 set expandtab
 set mouse=a
 set nowrap
@@ -28,11 +29,11 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'tpope/vim-surround'
 Plug 'kyazdani42/nvim-web-devicons'
 Plug 'kyazdani42/nvim-tree.lua'
+Plug 'morhetz/gruvbox'
 Plug 'tpope/vim-commentary' 
 Plug 'tpope/vim-fugitive' 
 Plug 'ap/vim-css-color'
 Plug 'neovim/nvim-lspconfig'
-Plug 'morhetz/gruvbox'
 Plug 'ryanoasis/vim-devicons'
 Plug 'jiangmiao/auto-pairs'
 Plug 'lukas-reineke/indent-blankline.nvim'
@@ -48,14 +49,20 @@ vim.call("plug#end")
 
 vim.g.loaded = 1
 vim.g.loaded_netrwPlugin = 1
+vim.cmd("colo gruvbox")
 
 vim.g.gruvbox_transparent_bg = 1
 vim.cmd("autocmd VimEnter * hi Normal ctermbg=none")
-vim.cmd("colo gruvbox")
 
 require'lspconfig'.tsserver.setup{}
 
-require'rust-tools'.setup{}
+require("rust-tools").setup({
+  server = {
+    on_attach = function(client) 
+      client.server_capabilities.semanticTokensProvider = nil 
+    end,
+  }
+})
 
 require("nvim-tree").setup({
   filters = {
@@ -104,4 +111,9 @@ vim.cmd([[
   autocmd FileType rust nnoremap <silent> <C-s> :silent %! rustfmt<CR>
   autocmd FileType javascript nnoremap <silent> <C-s> :Prettier<CR>
   autocmd FileType cpp setlocal tabstop=2 shiftwidth=4
+  hi DiffAdd cterm=NONE ctermbg=NONE
+  hi DiffChange cterm=NONE ctermbg=NONE
+  hi DiffDelete cterm=NONE ctermbg=NONE
+  hi DiffText cterm=NONE ctermbg=NONE 
+  hi SignColumn cterm=NONE ctermbg=NONE 
 ]])
