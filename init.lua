@@ -23,6 +23,7 @@ local Plug = vim.fn["plug#"]
 vim.call("plug#begin")
 
 Plug 'vim-airline/vim-airline'
+Plug 'simrat39/rust-tools.nvim'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'tpope/vim-surround'
 Plug 'kyazdani42/nvim-web-devicons'
@@ -33,18 +34,15 @@ Plug 'ap/vim-css-color'
 Plug 'neovim/nvim-lspconfig'
 Plug 'morhetz/gruvbox'
 Plug 'ryanoasis/vim-devicons'
-Plug 'neoclide/coc.nvim'
 Plug 'jiangmiao/auto-pairs'
 Plug 'lukas-reineke/indent-blankline.nvim'
-Plug 'folke/tokyonight.nvim'
 Plug 'nvim-lua/plenary.nvim'
 Plug('nvim-telescope/telescope.nvim', { ['tag'] = '0.1.4' })
 Plug('nvim-treesitter/nvim-treesitter', { ['do'] = ':TSUpdate' })
 Plug('prettier/vim-prettier', {
-  ['do'] = 'yarn install --frozen-lockfile --production',
   ['for'] = { 'javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue', 'svelte', 'yaml', 'html' } })
-Plug 'simrat39/rust-tools.nvim'
 Plug('ThePrimeagen/vim-be-good', { ['on'] = 'VimBeGood' })
+Plug('neoclide/coc.nvim', { ['build'] = { ['unix'] = 'yarn install --frozen-lockfile' } })
 
 vim.call("plug#end")
 
@@ -55,10 +53,9 @@ vim.g.gruvbox_transparent_bg = 1
 vim.cmd("autocmd VimEnter * hi Normal ctermbg=none")
 vim.cmd("colo gruvbox")
 
-require("rust-tools").setup()
+require'lspconfig'.tsserver.setup{}
 
-local lspconfig = require'lspconfig'
-lspconfig.tsserver.setup{}
+require'rust-tools'.setup{}
 
 require("nvim-tree").setup({
   filters = {
@@ -85,31 +82,9 @@ require("telescope").setup({
   }
 })
 
-require("tokyonight").setup({
-  style = "moon", 
-  transparent = true,
-  terminal_colors = true, 
-  styles = {
-    comments = { italic = true },
-    keywords = { italic = true },
-    functions = {},
-    variables = {},
-    sidebars = "dark",
-    floats = "dark", 
-  },
-  sidebars = { "qf", "help" }, 
-  day_brightness = 0.3,
-  hide_inactive_statusline = false,
-  dim_inactive = false,
-  lualine_bold = false, 
-  on_colors = function(colors) end,
-  on_highlights = function(highlights, colors) end,
-})
-
 vim.g.airline_powerline_fonts = 1
 vim.g.airline_ = 1
 vim.g.airline_theme = 'gruvbox'
--- vim.g.airline_theme = 'violet'
 vim.g.airline_extensions_tabline = 1
 
 vim.api.nvim_set_keymap("i", "<c-space>", "coc#refresh()", { noremap = true, silent = true, expr = true })
@@ -130,4 +105,3 @@ vim.cmd([[
   autocmd FileType javascript nnoremap <silent> <C-s> :Prettier<CR>
   autocmd FileType cpp setlocal tabstop=2 shiftwidth=4
 ]])
-
