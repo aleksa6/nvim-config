@@ -23,8 +23,10 @@ local Plug = vim.fn["plug#"]
 
 vim.call("plug#begin")
 
+Plug 'mrcjkb/rustaceanvim'
+Plug('ThePrimeagen/harpoon', { ['branch'] = 'harpoon2' })
+Plug 'lvimuser/lsp-inlayhints.nvim'
 Plug 'vim-airline/vim-airline'
-Plug 'simrat39/rust-tools.nvim'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'tpope/vim-surround'
 Plug 'kyazdani42/nvim-web-devicons'
@@ -32,18 +34,16 @@ Plug 'kyazdani42/nvim-tree.lua'
 Plug 'morhetz/gruvbox'
 Plug 'tpope/vim-commentary' 
 Plug 'tpope/vim-fugitive' 
-Plug 'ap/vim-css-color'
 Plug 'neovim/nvim-lspconfig'
 Plug 'ryanoasis/vim-devicons'
 Plug 'jiangmiao/auto-pairs'
-Plug 'lukas-reineke/indent-blankline.nvim'
 Plug 'nvim-lua/plenary.nvim'
 Plug('nvim-telescope/telescope.nvim', { ['tag'] = '0.1.4' })
 Plug('nvim-treesitter/nvim-treesitter', { ['do'] = ':TSUpdate' })
 Plug('prettier/vim-prettier', {
   ['for'] = { 'javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue', 'svelte', 'yaml', 'html' } })
-Plug('ThePrimeagen/vim-be-good', { ['on'] = 'VimBeGood' })
 Plug('neoclide/coc.nvim', { ['build'] = { ['unix'] = 'yarn install --frozen-lockfile' } })
+-- Plug 'lukas-reineke/indent-blankline.nvim'
 
 vim.call("plug#end")
 
@@ -54,15 +54,24 @@ vim.cmd("colo gruvbox")
 vim.g.gruvbox_transparent_bg = 1
 vim.cmd("autocmd VimEnter * hi Normal ctermbg=none")
 
-require'lspconfig'.tsserver.setup{}
-
-require("rust-tools").setup({
+vim.g.rustaceanvim = {
+  inlay_hints = {
+    highlight = "NonText",
+  },
   server = {
-    on_attach = function(client) 
+    on_attach = function(client, bufnr) 
       client.server_capabilities.semanticTokensProvider = nil 
+      vim.api.nvim_set_keymap("n", "<C-n>", ":RustLsp hover actions<CR>", { noremap = true })
+      local inlayhints = require("lsp-inlayhints"); -- resenje samo dok se ne prebacim na nvim 0.10 koji ima native inlay hints
+      inlayhints.setup()
+      inlayhints.on_attach(client, bufnr)
+      inlayhints.show()
     end,
-  }
-})
+  },
+}
+
+local lspconfig = require'lspconfig'
+lspconfig.tsserver.setup{}
 
 require("nvim-tree").setup({
   filters = {
@@ -89,6 +98,9 @@ require("telescope").setup({
   }
 })
 
+local harpoon = require("harpoon")
+harpoon.setup()
+
 vim.g.airline_powerline_fonts = 1
 vim.g.airline_ = 1
 vim.g.airline_theme = 'gruvbox'
@@ -98,7 +110,6 @@ vim.api.nvim_set_keymap("i", "<c-space>", "coc#refresh()", { noremap = true, sil
 vim.api.nvim_set_keymap("i", "<CR>", "coc#pum#visible() ? coc#pum#confirm() : '<CR>'", { noremap = true, silent = true, expr = true })
 vim.api.nvim_set_keymap("n", "<C-c>", ":wa | NvimTreeClose<CR>", { noremap = true })
 vim.api.nvim_set_keymap("n", "<C-f>", ":wa | NvimTreeFocus<CR>", { noremap = true })
-vim.api.nvim_set_keymap("n", "<C-j>", ":wa | NvimTreeToggle<CR>", { noremap = true })
 vim.api.nvim_set_keymap("n", "<C-m>", ":Telescope find_files<CR>", { noremap = true })
 vim.api.nvim_set_keymap("n", "<C-k>", ":Telescope oldfiles<CR>", { noremap = true })
 vim.api.nvim_set_keymap("n", "<C-l>", ":Telescope live_grep<CR>", { noremap = true })
@@ -106,6 +117,11 @@ vim.api.nvim_set_keymap("v", "<S-k>", ":m '<-2<CR>gv=gv", { noremap = true })
 vim.api.nvim_set_keymap("v", "<S-j>", ":m '>+1<CR>gv=gv", { noremap = true })
 vim.api.nvim_set_keymap("n", "<C-d>", "<C-d>zz", { noremap = true })
 vim.api.nvim_set_keymap("n", "<C-u>", "<C-u>zz", { noremap = true })
+
+vim.keymap.set("n", "<C-a>", function() harpoon:list():append() end)
+vim.keymap.set("n", "<C-j>", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
+vim.keymap.set("n", "<S-p>", function() harpoon:list():prev() end)
+vim.keymap.set("n", "<S-n>", function() harpoon:list():next() end)
 
 vim.cmd([[
   autocmd FileType rust nnoremap <silent> <C-s> :silent %! rustfmt<CR>
